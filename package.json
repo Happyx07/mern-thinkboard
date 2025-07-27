@@ -1,0 +1,13 @@
+{
+  "name": "mern-thinkboard",
+  "version": "1.0.0",
+  "description": "Learn to build a REST API with Express.js\r  first we will create a simple route\r  API - Application Programming Interface\r  Express.js - A web application framework for Node.js\r  Node.js - A JavaScript runtime built on Chrome's V8 JavaScript engine\r  API is a set of rules that allows different software applications to communicate with each other\r  REST - Representational State Transfer\r  CRUD - Create, Read, Update, Delete\r  REST API - A set of rules that allows different software applications to communicate with each other over the internet\r  RESTful API - An API that follows the principles of REST\r  HTTP - Hypertext Transfer Protocol\r  GET - Retrieve data from the server\r  POST - Send data to the server\r  PUT - Update data on the server\r  DELETE - Delete data from the server\r  JSON - JavaScript Object Notation\r  Middleware - A function that has access to the request object (req), the response object (res), and the next middleware function in the application’s request-response cycle\r  Body Parser - A middleware that parses the request body and makes it available under req.body\r  CORS - Cross-Origin Resource Sharing\r  Mongoose - A MongoDB object modeling tool designed to work in an asynchronous environment\r  MongoDB - A NoSQL database\r  MongoDB Atlas - A cloud database service by MongoDB",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm install --prefix frontend && npm install --prefix backend && npm run build --prefix frontend",
+    "start": "npm run start --prefix backend"},
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
+
