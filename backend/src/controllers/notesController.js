@@ -1,9 +1,9 @@
-import Note from "../models/note.js";
+import note from "../models/note.js";
 
 export async function getAllNotes (req, res) {
   try {
     // Simulate fetching notes from a database
-    const notes = await Note.find().sort({createAt:-1});// gives the latest notes first
+    const notes = await note.find().sort({createAt:-1});// gives the latest notes first
     res.status(200).json(notes);
 
   } catch (error) {
@@ -15,7 +15,7 @@ export async function getAllNotes (req, res) {
 export async function getNoteById (req, res) {
   try {
     const noteId = req.params.id;
-    const note = await Note.findById(noteId);
+    const note = await note.findById(noteId);
     if (!note) {
       return res.status(404).json({ message: "Note not found" });
     }
