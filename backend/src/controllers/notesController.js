@@ -1,9 +1,9 @@
-import note from "../models/note.js";
+import Note from "../models/note.js";
 
 export async function getAllNotes (req, res) {
   try {
     // Simulate fetching notes from a database
-    const notes = await note.find().sort({createAt:-1});// gives the latest notes first
+    const notes = await Note.find().sort({ createdAt: -1 }); // gives the latest notes first
     res.status(200).json(notes);
 
   } catch (error) {
@@ -15,11 +15,11 @@ export async function getAllNotes (req, res) {
 export async function getNoteById (req, res) {
   try {
     const noteId = req.params.id;
-    const note = await note.findById(noteId);
-    if (!note) {
+    const noteDoc = await Note.findById(noteId);
+    if (!noteDoc) {
       return res.status(404).json({ message: "Note not found" });
     }
-    res.status(200).json(note); // Add this line
+    res.status(200).json(noteDoc);
   } catch (error) {
     console.error("Error in getNoteById controller:", error);
     res.status(500).json({ message: "Error fetching note" });
@@ -30,38 +30,38 @@ export async function getNoteById (req, res) {
 export async function createNote (req, res) {
   try {
     const { title, content } = req.body;
-  const newNote = new Note({
-    title,
-    content,
-  });
-  // Simulate saving the note to a database
-  await newNote.save();
-  res.status(201).json({ message: "Note created successfully!" });
+    const newNote = new Note({
+      title,
+      content,
+    });
+    await newNote.save();
+    res.status(201).json({ message: "Note created successfully!" });
   } catch (error) {
     console.error("Error in createNote controller:", error);
     res.status(500).json({ message: "Error in creating note" });
   }
 }
+
 export async function updateNote (req, res) {
   try {
-    const{ title, content } = req.body;
-    const updateNote = await Note.findByIdAndUpdate(req.params.id, {
-      title,
-      content,
-    },{ new: true });
+    const { title, content } = req.body;
+    const updatedNote = await Note.findByIdAndUpdate(
+      req.params.id,
+      { title, content },
+      { new: true }
+    );
 
-
-    if (!updateNote) {
+    if (!updatedNote) {
       return res.status(404).json({ message: "Note not found" });
     }
 
     res.status(200).json({ message: "Note updated successfully!" });
   } catch (error) {
-    
     console.error("Error in updateNote controller:", error);
     res.status(500).json({ message: "Error in updating note" });
   }
 }
+
 export async function deleteNote (req, res) {
   try {
     const noteId = req.params.id;
