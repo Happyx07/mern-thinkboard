@@ -1,72 +1,106 @@
- Learn to build a REST API with Express.js
- first we will create a simple route
- API - Application Programming Interface
- Express.js - A web application framework for Node.js
- Node.js - A JavaScript runtime built on Chrome's V8 JavaScript engine
- API is a set of rules that allows different software applications to communicate with each other
- REST - Representational State Transfer
- CRUD - Create, Read, Update, Delete
- REST API - A set of rules that allows different software applications to communicate with each other over the internet
- RESTful API - An API that follows the principles of REST
- HTTP - Hypertext Transfer Protocol
- GET - Retrieve data from the server
- POST - Send data to the server
- PUT - Update data on the server
- DELETE - Delete data from the server
- JSON - JavaScript Object Notation
- Middleware - A function that has access to the request object (req), the response object (res), and the next middleware function in the application’s request-response cycle
- Body Parser - A middleware that parses the request body and makes it available under req.body
- CORS - Cross-Origin Resource Sharing
- Mongoose - A MongoDB object modeling tool designed to work in an asynchronous environment
- MongoDB - A NoSQL database
- MongoDB Atlas - A cloud database service by MongoDB
+## MERN ThinkBoard — Local Development Guide
 
+### Prerequisites
+- **Node.js**: v18 or newer
+- **npm**: comes with Node
+- **MongoDB**: MongoDB Atlas connection string or local MongoDB instance
 
+### Project structure
+- `backend/`: Express + Mongoose API (serves frontend in production)
+- `frontend/`: React + Vite UI
 
- _--------------------------------------------------
- ______________HTTP STATUS CODES____________________
-  _--------------------------------------------------
-  1XX - Informational responses
-  2XX - Success
-  3XX - Redirection
-  4XX - Client errors
-  5XX - Server errors
-  _-----------------------------------------  ---------
-  100 Continue - The server has received the request headers and the client should proceed to send the request body
-  101 Switching Protocols - The requester has asked the server to switch protocols
-  200 OK - The request has succeeded
-  201 Created - The request has been fulfilled and resulted in a new resource being created
-  202 Accepted - The request has been accepted for processing, but the processing has not been completed
-  
-  301 Moved Permanently - The requested resource has been assigned a new permanent URI
-  302 Found - The requested resource resides temporarily under a different URI
-  303 See Other - The response to the request can be found under a different URI
- 
-  400 Bad Request - The server cannot or will not process the request due to a client error
-  401 Unauthorized - The request has not been applied because it lacks valid authentication credentials for the target resource
-  403 Forbidden - The server understood the request but refuses to authorize it
-  
-  500 Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request
-  503 Service Unavailable - The server is currently unable to handle the request due to temporary overloading or maintenance of the server
-  _--------------------------------------------------
-  ________________HTTP METHODS____________________
-  _--------------------------------------------------
-  GET - Retrieve data from the server
-  POST - Send data to the server  
-  PUT - Update data on the server
-  DELETE - Delete data from the server
-  PATCH - Apply partial modifications to a resource
-  HEAD - Same as GET, but only retrieves the headers
-  OPTIONS - Describe the communication options for the target resource
-  ---------------------------------------------------
+### 1) Configure environment variables
+Create a `.env` file in `backend/` with your MongoDB connection string:
 
+```
+backend/.env
+-----------------
+MONGO_URI=<your-mongodb-connection-string>
+```
 
+You do NOT need to set `PORT`; the server defaults to 5000 and will use `process.env.PORT` in hosting environments.
 
-  ________________ENDPOINTS____________________
-  _--------------------------------------------------
-  WHAT IS AN ENDPOINT?
-  An endpoint is a combination of a URL and an HTTP method that lets the client interact with a specific resource on the server.
-  For example, the endpoint /api/users is a combination of the URL /api/users and the HTTP method GET, which retrieves a list of users from the server.
+### 2) Install dependencies
+Run from the project root:
 
-  **//what is an endpoint?**
-// An endpoint is a specific URL where an API can be accessed by a client application. It is a point of interaction between the client and the server, allowing the client to send requests and receive responses.
+```bash
+npm install --prefix backend
+npm install --prefix frontend
+```
+
+### 3) Run in development (two terminals)
+- Backend (Port 5000)
+  - PowerShell:
+    ```powershell
+    cd backend
+    $env:MONGO_URI="<your-mongodb-connection-string>"
+    npm run dev
+    ```
+  - cmd:
+    ```cmd
+    cd backend
+    set MONGO_URI=<your-mongodb-connection-string> && npm run dev
+    ```
+
+- Frontend (Port 5173, proxies API to 5000 via absolute URL in dev)
+  ```bash
+  cd frontend
+  npm run dev
+  ```
+
+Open `http://localhost:5173` for the UI. API runs at `http://localhost:5000/api`.
+
+### 4) Run production-like (single port)
+This builds the frontend and serves it from the backend at the same origin.
+
+```bash
+# Build the frontend
+cd frontend
+npm run build
+cd ..
+
+# Start the backend in production mode
+cd backend
+# PowerShell
+$env:NODE_ENV="production"; $env:MONGO_URI="<your-mongodb-connection-string>"; npm start
+# cmd
+set NODE_ENV=production && set MONGO_URI=<your-mongodb-connection-string> && npm start
+```
+Open `http://localhost:5000`. The UI and API share the same origin.
+
+Alternatively, from the repository root you can use:
+```bash
+npm run build   # installs and builds frontend
+npm run start   # starts backend (which serves the built frontend)
+```
+(Ensure `backend/.env` has `MONGO_URI`.)
+
+### Windows shell differences
+- PowerShell: `$env:VAR="value"; command`
+- cmd: `set VAR=value && command`
+- POSIX shells (Git Bash/WSL): `VAR=value command`
+
+To avoid shell differences inside npm scripts, you can use `cross-env`.
+
+### API endpoints
+- `GET /api/notes` — list notes
+- `GET /api/notes/:id` — get a note
+- `POST /api/notes` — create a note `{ title, content }`
+- `PUT /api/notes/:id` — update a note `{ title, content }`
+- `DELETE /api/notes/:id` — delete a note
+
+### Troubleshooting
+- "Failed to create note" or 500s:
+  - Check backend logs. Ensure `MONGO_URI` is set and valid.
+  - Confirm the controller imports `Note` from `../models/note.js` and uses it consistently.
+- CORS errors in development:
+  - Backend enables CORS for `http://localhost:5173` in non-production.
+  - Frontend dev calls `http://localhost:5000/api`.
+- Blank page in production deep links:
+  - Backend serves `frontend/dist/index.html` via a catch‑all route in production.
+
+### Deploy (Render) — Single port
+- Build command: `npm run build`
+- Start command: `npm run start`
+- Environment variables: set `MONGO_URI` (and optionally `NODE_ENV=production`)
+- The backend serves `frontend/dist` and exposes the API at `/api`.
