@@ -4,7 +4,6 @@ import { useState } from 'react'
 import api from '../lib/axios'
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
-import Note from '../../../backend/src/models/note'
 import NoteCard from '../components/NoteCard'
 import NotesNotFound from '../components/NotesNotFound'
 
